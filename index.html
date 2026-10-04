@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ · Phys10 Bilingual</title>
+<meta name="description" content="Học liệu song ngữ Việt – Anh môn Vật lí 10 (SGK Kết nối tri thức với cuộc sống).">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Charis+SIL:wght@400;700&display=swap" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<main id="page" class="wrap"><div id="root"></div></main>
+<noscript><p style="padding:20px">Trang này cần bật JavaScript để hiển thị nội dung.</p></noscript>
+<script src="data/core.js"></script>
+<script src="data/ch4.js"></script>
+<script src="data/ch5.js"></script>
+<script src="data/ch6.js"></script>
+<script src="data/ch7.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const P = P10, E = P.esc, en = P.uiEn();
+  const U = { // chữ riêng trang chủ
+    eyebrow: ['Vật lí 10 · SGK Kết nối tri thức với cuộc sống', 'Physics 10 · Kết nối tri thức textbook'],
+    h1: ['Vật lí 10<br><span>song ngữ</span> Việt – Anh', 'Physics 10<br><span>in two</span> languages'],
+    lead: ['Mỗi bài học, mỗi thuật ngữ và mỗi câu hỏi đều có bản tiếng Việt và tiếng Anh. Chọn mức ngôn ngữ vừa sức, rồi nâng dần khi đã quen.',
+      'Every lesson, term and question comes in Vietnamese and English. Choose the language level that suits you and move up as you gain confidence.'],
+    start: ['Bắt đầu học', 'Start learning'], cont: ['Tiếp tục học', 'Continue'],
+    doing: ['Em đang học dở', 'You were reading'], first: ['Bắt đầu từ', 'Start with'], opened: ['Đã mở', 'Opened'], of: ['bài', 'lessons'],
+    lvT: ['Cùng một câu, ba mức ngôn ngữ', 'One sentence, three language levels'], cur: ['đang chọn', 'selected'], lvN: ['Mức', 'Level'],
+    lvTip: ['Bấm vào một mức để chuyển. Nút đổi mức luôn nằm ở đầu trang.', 'Tap a level to switch. The level switch is always at the top of the page.'],
+    tLes: ['Bài học', 'Lessons'], tTerms: ['Thuật ngữ', 'Glossary'], dTerms: ['thuật ngữ có phiên âm, nghe đọc', 'terms with IPA and audio'],
+    tPrac: ['Luyện tập', 'Practice'], dPrac: ['4 đề theo chương, chấm điểm ngay', '4 chapter tests, marked instantly'],
+    tGame: ['Trò chơi', 'Games'], dGame: ['Ghép cặp, Nhanh tay – chiếu được trên lớp', 'Match-up, Quick-fire – classroom ready'],
+    chT: ['Bốn chương · học kì II', 'Four chapters · semester 2'], nLes: ['bài', 'lessons'], nCh: ['chương', 'chapters'],
+    st: ['bài · đã mở', 'lessons · opened'], none: ['bài · chưa bắt đầu', 'lessons · not started']
+  };
+  const u = k => en ? U[k][1] : U[k][0];
+  const prog = P.progress(); const last = P.get('last', null);
+  const lastL = last && P.lessonMap[last];
+  const cur = lastL || P.allLessons[0];
+  const nOpen = P.allLessons.filter(l => prog[l.n]).length;
+  const S = { vi: 'Động năng là năng lượng mà vật có được do chuyển động.', en: 'Kinetic energy is the energy an object has because it is moving.' };
+  const lv = (l, i, name, body) => `<button type="button" class="lv${P.lang === l ? ' on' : ''}" data-lang="${l}" aria-pressed="${P.lang === l}"><span class="num-dot">${i}</span><span><b>${u('lvN')} ${i} · ${name}${P.lang === l ? ' · ' + u('cur') : ''}</b><span class="t">${body}</span></span></button>`;
+
+  let h = `<section class="hero">
+    <div>
+      <span class="eyebrow-pill">${u('eyebrow')}</span>
+      <h1>${u('h1')}</h1>
+      <p class="lead">${u('lead')}</p>
+      <div class="cont c${cur.chapter}">
+        <span class="ch-ic">${P.icon(P.CH_ICON[cur.chapter])}</span>
+        <div class="cont-t"><small>${lastL ? u('doing') : u('first')} · ${P.ui('chapter')} ${P.ROMAN[cur.chapter]}</small>
+          <b>${P.ui('lesson')} ${cur.n}. ${E(P.T(cur))}</b>
+          <span class="pbar"><i style="width:${nOpen / P.allLessons.length * 100}%"></i></span><span class="small muted">${u('opened')} ${nOpen} / ${P.allLessons.length} ${u('of')}</span></div>
+        <a class="btn cta" href="bai.html?n=${cur.n}">${lastL ? u('cont') : u('start')} ${P.icon('arrow')}</a>
+      </div>
+    </div>
+    <div class="panel has-lab levels">
+      <div class="lab">${P.icon('lang')}<span>${u('lvT')}</span></div>
+      ${lv('vi', 1, P.ui('lvVi'), 'Động năng (<i lang="en">kinetic energy</i>) là năng lượng mà vật có được do chuyển động.')}
+      ${lv('bi', 2, P.ui('lvBi'), `${S.vi}<span class="en" lang="en">${S.en}</span>`)}
+      ${lv('en', 3, P.ui('lvEn'), `<span class="en" lang="en">${S.en}</span>`)}
+      <p class="small muted" style="margin:6px 4px 0">${u('lvTip')}</p>
+    </div></section>`;
+
+  h += `<div class="tiles">
+    <a class="card tile lift c4" href="baihoc.html"><span class="ic">${P.icon('book')}</span><b>${u('tLes')}</b><span>${P.allLessons.length} ${u('nLes')} · ${P.chapters.length} ${u('nCh')}</span></a>
+    <a class="card tile lift c5" href="thuatngu.html"><span class="ic">${P.icon('abc')}</span><b>${u('tTerms')}</b><span>${P.allTerms.length} ${u('dTerms')}</span></a>
+    <a class="card tile lift c6" href="luyentap.html"><span class="ic">${P.icon('pen')}</span><b>${u('tPrac')}</b><span>${u('dPrac')}</span></a>
+    <a class="card tile lift c7" href="trochoi.html"><span class="ic">${P.icon('game')}</span><b>${u('tGame')}</b><span>${u('dGame')}</span></a></div>`;
+
+  h += `<div class="sec-head"><h2>${u('chT')}</h2><a href="baihoc.html">${P.ui('allLessons')} ${P.icon('arrow')}</a></div><div class="grid g4">`;
+  P.chapters.forEach(c => {
+    const done = c.lessons.filter(l => prog[l.n]).length;
+    h += `<article class="chap lift c${c.n}"><a class="chap-art" href="baihoc.html#c${c.n}" tabindex="-1" aria-hidden="true">${P.pic(c.n)}</a>
+      <div class="chap-b"><span class="ch-ic">${P.icon(P.CH_ICON[c.n])}</span>
+        <small>${P.ui('chapter')} ${P.ROMAN[c.n]} · ${P.ui('page')} ${c.chapter.page}</small>
+        <h3><a href="baihoc.html#c${c.n}">${E(P.T(c.chapter))}</a></h3>
+        ${P.lang === 'bi' ? `<div class="en" lang="en">${E(c.chapter.en)}</div>` : ''}
+        <ol class="chap-ls">${c.lessons.map(l => `<li><a href="bai.html?n=${l.n}"><b>${l.n}</b><span>${E(P.T(l))}</span>${prog[l.n] ? `<span class="ok-ic" title="${P.ui('done')}">${P.icon('check')}</span>` : ''}</a></li>`).join('')}</ol>
+        <div class="pbar"><i style="width:${done / c.lessons.length * 100}%"></i></div>
+        <div class="st">${c.lessons.length} ${done ? `${u('st')} ${done} / ${c.lessons.length}` : u('none')}</div></div></article>`;
+  });
+  h += `</div>`;
+  document.getElementById('root').innerHTML = h;
+  P.mount('home', { title: P.ui('home') });
+})();
+</script>
+</body></html>

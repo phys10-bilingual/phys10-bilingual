@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giới thiệu · Phys10 Bilingual</title>
+<meta name="description" content="Học liệu song ngữ Việt – Anh môn Vật lí 10 (SGK Kết nối tri thức với cuộc sống).">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Charis+SIL:wght@400;700&display=swap" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<main id="page" class="wrap"><div id="root"></div></main>
+<noscript><p style="padding:20px">Trang này cần bật JavaScript để hiển thị nội dung.</p></noscript>
+<script src="data/core.js"></script>
+<script src="data/ch4.js"></script>
+<script src="data/ch5.js"></script>
+<script src="data/ch6.js"></script>
+<script src="data/ch7.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const P = P10, en = P.uiEn();
+  P.mount('about', { title: P.ui('about') });
+  const S = [
+    { id: 'la-gi', ic: 'info', h: ['Phys10 Bilingual là gì?', 'What is Phys10 Bilingual?'],
+      p: ['Học liệu số song ngữ Việt – Anh cho môn Vật lí 10, bám sát sách giáo khoa <i>Vật lí 10 – Kết nối tri thức với cuộc sống</i>. Mục tiêu: giúp học sinh làm quen, hiểu và sử dụng thuật ngữ Vật lí bằng tiếng Anh mà không làm nhẹ đi kiến thức môn học, góp phần thực hiện Đề án đưa tiếng Anh thành ngôn ngữ thứ hai trong trường học (Quyết định số 2371/QĐ-TTg ngày 27/10/2025).',
+        'A Vietnamese–English digital resource for Physics 10, following the textbook <i>Vật lí 10 – Kết nối tri thức với cuộc sống</i>. It helps students get to know, understand and use physics terms in English while keeping the physics content complete.'] },
+    { id: 'tac-gia', ic: 'user', h: ['Tác giả', 'Author'],
+      p: ['Giáo viên <b>Mai Thị Trinh</b>, Trường THPT Bùi Hữu Nghĩa, thành phố Cần Thơ – thiết kế, xây dựng và rà soát nội dung. Trong quá trình xây dựng, tác giả có sử dụng công cụ trí tuệ nhân tạo (AI) để hỗ trợ soạn bản nháp nội dung, bản dịch và viết mã; nội dung được tác giả đối chiếu với sách giáo khoa trước khi đưa vào dạy học.',
+        'Teacher <b>Mai Thị Trinh</b>, Bùi Hữu Nghĩa High School, Cần Thơ – design, development and content review. Artificial intelligence (AI) tools were used to help draft content, translations and code; the author checks the content against the textbook before using it in class.'] },
+    { id: 'pham-vi', ic: 'book', h: ['Phạm vi hiện có', 'Current scope'],
+      p: ['Học kì II: Chương IV (Năng lượng, công, công suất), Chương V (Động lượng), Chương VI (Chuyển động tròn), Chương VII (Biến dạng của vật rắn. Áp suất chất lỏng) – Bài 23 đến Bài 34. Mỗi bài có: tóm tắt kiến thức ở 3 mức ngôn ngữ, công thức kèm giải thích kí hiệu, ví dụ có lời giải, thuật ngữ có phiên âm và phát âm, 5 câu tự kiểm tra. Mỗi chương có một đề luyện tập.',
+        'Semester 2: Chapters IV–VII (Lessons 23–34). Each lesson has a summary at three language levels, formulas with symbols explained, worked examples, key terms with IPA and audio, and 5 self-check questions. Each chapter has a practice test.'] },
+    { id: 'tren-lop', ic: 'school', h: ['Gợi ý sử dụng trên lớp', 'Classroom use'],
+      p: ['<b>5 phút thuật ngữ:</b> đầu hoặc cuối tiết, giáo viên mở <a href="trochoi.html">Trò chơi</a>, chọn phạm vi là bài đang học, bật "Trình chiếu"; cả lớp trả lời, nghe phát âm và đọc theo.<br><b>Tự học:</b> trước giờ học, học sinh đọc bài ở mức ngôn ngữ của mình và làm 5 câu tự kiểm tra; sau giờ học chơi trò chơi theo bài.<br><b>Sau mỗi chương:</b> làm đề <a href="luyentap.html">Luyện tập</a>; câu sai có đường dẫn về bài cần xem lại.<br><b>Lên mức:</b> khi làm đúng từ 8/10 câu ở bài kiểm tra 10 câu của <a href="thuatngu.html?mode=test">Kho thuật ngữ</a> cho chương, học sinh thử chuyển lên mức ngôn ngữ cao hơn.',
+        '<b>5-minute terms:</b> at the start or end of a lesson, open <a href="trochoi.html">Games</a>, choose the current lesson and turn on "Projector".<br><b>Self-study:</b> read the lesson at your level and do the 5 check questions; play a term game afterwards.<br><b>After each chapter:</b> take the <a href="luyentap.html">practice test</a>.<br><b>Moving up:</b> when you score 8/10 or more on the chapter\'s 10-question <a href="thuatngu.html?mode=test">glossary test</a>, try the next language level.'] },
+    { id: 'nguon', ic: 'law', h: ['Nguồn và quy ước', 'Sources and conventions'],
+      p: ['Kiến thức, kí hiệu, số hiệu công thức và số trang theo SGK Vật lí 10 – Kết nối tri thức với cuộc sống (NXB Giáo dục Việt Nam). Khối có nhãn "Ngoài SGK" là phần bổ sung, không có trong sách. Thuật ngữ tiếng Anh theo cách dùng phổ biến trong các chương trình Vật lí quốc tế (Cambridge), chính tả Anh – Anh. Phiên âm IPA theo giọng Anh – Anh (tham khảo Oxford Learner\'s Dictionaries). Nút loa phát giọng đọc có sẵn của trình duyệt/điện thoại, nên có thể khác nhau giữa các máy; nút <b>Oxford</b> và <b>Cambridge</b> bên cạnh mỗi thuật ngữ mở mục từ trên Oxford Learner\'s Dictionaries và Cambridge Dictionary (cần có mạng) để nghe giọng đọc chuẩn của từ điển.',
+        'Physics content, symbols, equation numbers and page numbers follow the Vật lí 10 textbook (Kết nối tri thức). Blocks labelled "Beyond textbook" are extra material. English terms follow common international usage (Cambridge), British spelling. IPA shows British pronunciation (based on Oxford Learner\'s Dictionaries). The speaker button uses your device\'s built-in voice, so it may sound different on different devices; the <b>Oxford</b> and <b>Cambridge</b> buttons next to each term open the entry on Oxford Learner\'s Dictionaries and Cambridge Dictionary (internet needed) so you can hear the dictionary\'s own recording.'] },
+    { id: 'nguon-anh', ic: 'cards', h: ['Nguồn ảnh', 'Image credits'],
+      p: ['Ảnh minh hoạ các chương lấy từ Wikimedia Commons, đã cắt và thu nhỏ.<br>Chương IV – <a href="https://commons.wikimedia.org/wiki/File:Leviathan_ascending_(2).jpg" target="_blank" rel="noopener">Leviathan ascending</a>, Jason Zhang, CC BY-SA 3.0.<br>Chương V – <a href="https://commons.wikimedia.org/wiki/File:Newton%27s_Cradle_(15221366308).jpg" target="_blank" rel="noopener">Newton\'s Cradle</a>, Sheila Sund, CC BY 2.0.<br>Chương VI – <a href="https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_Schlossplatz,_Herbstsend,_Kettenkarussell_--_2024_--_6459.jpg" target="_blank" rel="noopener">Kettenkarussell, Münster</a>, Dietmar Rabich, CC BY-SA 4.0.<br>Chương VII – <a href="https://commons.wikimedia.org/wiki/File:New_Croton_Dam_NY1.jpg" target="_blank" rel="noopener">New Croton Dam</a>, Acroterion, CC BY-SA 4.0.',
+        'Chapter illustrations are from Wikimedia Commons, cropped and resized.<br>Chapter IV – <a href="https://commons.wikimedia.org/wiki/File:Leviathan_ascending_(2).jpg" target="_blank" rel="noopener">Leviathan ascending</a>, Jason Zhang, CC BY-SA 3.0.<br>Chapter V – <a href="https://commons.wikimedia.org/wiki/File:Newton%27s_Cradle_(15221366308).jpg" target="_blank" rel="noopener">Newton\'s Cradle</a>, Sheila Sund, CC BY 2.0.<br>Chapter VI – <a href="https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_Schlossplatz,_Herbstsend,_Kettenkarussell_--_2024_--_6459.jpg" target="_blank" rel="noopener">Kettenkarussell, Münster</a>, Dietmar Rabich, CC BY-SA 4.0.<br>Chapter VII – <a href="https://commons.wikimedia.org/wiki/File:New_Croton_Dam_NY1.jpg" target="_blank" rel="noopener">New Croton Dam</a>, Acroterion, CC BY-SA 4.0.'] },
+    { id: 'du-lieu', ic: 'shield', h: ['Dữ liệu cá nhân', 'Personal data'],
+      p: ['Trang web không yêu cầu đăng nhập và không thu thập thông tin cá nhân. Tiến độ học, điểm luyện tập và thuật ngữ "đã thuộc" chỉ lưu trên trình duyệt của chính máy em. Phông chữ được tải từ dịch vụ Google Fonts.',
+        'No login and no personal data. Your progress, scores and "known" terms are stored only in your own browser. Fonts are loaded from Google Fonts.'] },
+    { id: 'gop-y', ic: 'chat', h: ['Góp ý', 'Feedback'],
+      p: ['Nếu phát hiện lỗi kiến thức, lỗi dịch hoặc lỗi phát âm, em hãy báo cho giáo viên bộ môn kèm tên bài và vị trí.', 'If you find a mistake in the physics, translation or pronunciation, please tell your teacher, giving the lesson and the place.'] }
+  ];
+  const t = a => en ? a[1] : a[0];
+  document.getElementById('root').innerHTML = `<div class="page-hero"><span class="hero-ic">${P.icon('info')}</span><h1>${P.ui('about')}</h1><span class="eyebrow">Phys10 Bilingual</span></div>` +
+    S.map(s => `<section class="card about" id="${s.id}"><span class="ch-ic">${P.icon(s.ic)}</span><div><h2>${t(s.h)}</h2><p>${t(s.p)}</p>${P.lang === 'bi' ? `<p class="en" lang="en" style="margin-top:8px">${s.p[1]}</p>` : ''}</div></section>`).join('') +
+    `<p class="small muted">${en ? 'Status' : 'Tình trạng'}: ${en ? 'trial version – content under review by the teacher.' : 'bản thử nghiệm – nội dung đang được giáo viên rà soát.'} · ${P.allLessons.length} ${en ? 'lessons' : 'bài'} · ${P.allTerms.length} ${en ? 'terms' : 'thuật ngữ'}</p>`;
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }
+})();
+</script>
+</body></html>

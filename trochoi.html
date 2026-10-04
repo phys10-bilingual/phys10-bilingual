@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trò chơi · Phys10 Bilingual</title>
+<meta name="description" content="Học liệu song ngữ Việt – Anh môn Vật lí 10 (SGK Kết nối tri thức với cuộc sống).">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Charis+SIL:wght@400;700&display=swap" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<main id="page" class="wrap"><div id="root"></div></main>
+<noscript><p style="padding:20px">Trang này cần bật JavaScript để hiển thị nội dung.</p></noscript>
+<script src="data/core.js"></script>
+<script src="data/ch4.js"></script>
+<script src="data/ch5.js"></script>
+<script src="data/ch6.js"></script>
+<script src="data/ch7.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const P = P10, E = P.esc, en = P.uiEn();
+  const U = {
+    title: ['Trò chơi thuật ngữ', 'Term games'], eyebrow: ['5 phút thuật ngữ', '5-minute terms'],
+    lead: ['Dùng cho hoạt động "5 phút thuật ngữ" đầu hoặc cuối tiết, hoặc tự ôn ở nhà. Bật "Trình chiếu" để chữ to khi chiếu lên màn hình lớp học.', 'For a "5-minute terms" warm-up or wrap-up in class, or for revision at home. Turn on "Projector" for large text on a classroom screen.'],
+    match: ['Ghép cặp', 'Match-up'], rush: ['Nhanh tay', 'Quick-fire'],
+    matchD: ['Ghép 6 cặp thẻ Việt – Anh nhanh nhất có thể.', 'Match 6 Vietnamese–English pairs as fast as you can.'],
+    rushD: ['60 giây: chọn đáp án đúng càng nhiều càng tốt.', '60 seconds: get as many right as you can.'],
+    matchP: ['12 thẻ · tính giờ', '12 cards · timed'], rushP: ['60 giây · tính điểm', '60 seconds · scored'],
+    scope: ['Phạm vi', 'Scope'], all: ['Tất cả', 'All'], proj: ['Trình chiếu', 'Projector'],
+    mode: ['Kiểu câu hỏi', 'Question type'], mEV: ['Anh → Việt', 'English → Vietnamese'], mVE: ['Việt → Anh', 'Vietnamese → English'], mL: ['Nghe → Việt', 'Listen → Vietnamese'],
+    play: ['Chơi', 'Play'], again: ['Chơi lại', 'Play again'], time: ['Thời gian', 'Time'], score: ['Điểm', 'Score'], pairs: ['Cặp', 'Pairs'],
+    done: ['Hoàn thành!', 'Finished!'], best: ['Kỉ lục của em', 'Your best'], streak: ['Chuỗi đúng', 'Streak'], maxStreak: ['Chuỗi đúng dài nhất', 'Longest streak'], listen: ['Nghe lại', 'Listen again'],
+    need: ['Phạm vi này có ít hơn 6 thuật ngữ, hãy chọn phạm vi rộng hơn.', 'Fewer than 6 terms in this scope – choose a wider scope.'],
+    sec: ['giây', 's'], wrongList: ['Cần ôn lại', 'Review these'], inScope: ['thuật ngữ trong phạm vi', 'terms in scope'], miss: ['lần chọn sai', 'mistakes'],
+    leave: ['Ván đang chơi sẽ kết thúc khi đổi mức ngôn ngữ. Vẫn đổi?', 'The current game will end if you change the language level. Change anyway?']
+  };
+  const u = k => en ? U[k][1] : U[k][0];
+  P.mount('games', { title: u('title') });
+  const root = document.getElementById('root');
+  const saved = P.restore ? P.sget('gm', null) : null; P.sset('gm', null);
+  const st = Object.assign({ game: P.qs('g') === 'rush' ? 'rush' : 'match', scope: P.qs('l') ? 'l' + P.qs('l') : (P.qs('c') ? 'c' + P.qs('c') : 'all'), mode: 'ev' }, saved || {});
+  st.big = P.get('big', false);
+  const best = P.get('gbest', {});
+  const pool = () => P.allTerms.filter(t => st.scope === 'all' || (st.scope[0] === 'c' ? t.ch === +st.scope.slice(1) : t.l === +st.scope.slice(1)));
+  const scopeOpts = `<option value="all">${u('all')}</option>` + P.chapters.map(c => `<optgroup label="${P.ui('chapter')} ${P.ROMAN[c.n]}. ${E(P.T(c.chapter))}"><option value="c${c.n}">${P.ui('chapter')} ${P.ROMAN[c.n]} – ${u('all')}</option>${c.lessons.map(l => `<option value="l${l.n}">${P.ui('lesson')} ${l.n}. ${E(P.T(l))}</option>`).join('')}</optgroup>`).join('');
+
+  root.innerHTML = `<div class="page-hero"><span class="hero-ic">${P.icon('game')}</span><h1>${u('title')}</h1><span class="eyebrow">${u('eyebrow')}</span></div>
+    <p class="lead">${u('lead')}</p>
+    <div class="gcards">
+      <button type="button" class="gcard c5" data-game="match"><span class="gprev m"><i>công</i><i class="x">?</i><i lang="en">power</i><i class="x">?</i><i lang="en">work</i><i>công suất</i></span>
+        <span><b>${u('match')}</b><span class="d">${u('matchD')}</span><span class="pill">${u('matchP')}</span></span></button>
+      <button type="button" class="gcard c4" data-game="rush"><span class="gprev"><i class="big x" lang="en">momentum</i><i>động lượng</i><i>động năng</i><i class="bar"></i></span>
+        <span><b>${u('rush')}</b><span class="d">${u('rushD')}</span><span class="pill">${u('rushP')}</span></span></button></div>
+    <div class="card g-set">
+      <label for="sc">${u('scope')} <select id="sc">${scopeOpts}</select></label>
+      <label for="md" id="modeBox">${u('mode')} <select id="md"><option value="ev">${u('mEV')}</option><option value="ve">${u('mVE')}</option><option value="lv">${u('mL')}</option></select></label>
+      <label style="cursor:pointer"><input type="checkbox" id="big"> ${P.icon('screen')} ${u('proj')}</label>
+      <span class="spacer"></span><button type="button" class="btn cta" id="play">${P.icon('play')} ${u('play')}</button></div>
+    <div class="game-stage" id="stage" aria-live="polite"></div>`;
+  const sc = root.querySelector('#sc'), md = root.querySelector('#md'), bigI = root.querySelector('#big'), stage = root.querySelector('#stage');
+  sc.value = st.scope; if (!sc.value) { st.scope = 'all'; sc.value = 'all'; }
+  md.value = st.mode; if (!md.value) { st.mode = 'ev'; md.value = 'ev'; }
+  bigI.checked = st.big; stage.classList.toggle('big', st.big);
+  const syncGame = () => { root.querySelectorAll('[data-game]').forEach(b => { const on = b.dataset.game === st.game; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); root.querySelector('#modeBox').style.display = st.game === 'rush' ? '' : 'none'; };
+  root.querySelectorAll('[data-game]').forEach(b => b.onclick = () => { st.game = b.dataset.game; syncGame(); intro(); });
+  sc.onchange = () => { st.scope = sc.value; intro(); };
+  md.onchange = () => { st.mode = md.value; intro(); };
+  bigI.onchange = () => { st.big = bigI.checked; P.set('big', st.big); stage.classList.toggle('big', st.big); };
+  root.querySelector('#play').onclick = () => start();
+  stage.addEventListener('click', e => { if (e.target.closest('[data-play]')) start(); });
+
+  /* Dừng hẳn ván đang chơi: xoá cả đồng hồ, hẹn giờ chuyển câu và khoá bấm */
+  let timer = null, tmo = null, running = false;
+  const stop = () => {
+    if (timer) { clearInterval(timer); timer = null; }
+    if (tmo) { clearTimeout(tmo); tmo = null; }
+    stage.onclick = null; delete stage.dataset.lock; running = false;
+  };
+  P.onLang(() => {
+    if (running && !confirm(u('leave'))) return false;
+    P.sset('gm', { game: st.game, scope: st.scope, mode: st.mode });
+  });
+  const key = () => `${st.game}-${st.game === 'rush' ? st.mode : ''}-${st.scope}`;
+  const playBtn = lbl => `<button type="button" class="btn cta lg" data-play>${P.icon('play')} ${lbl}</button>`;
+  const listHTML = ts => `<div class="g-list">${ts.map(t => `<div class="row c${t.ch}"><b class="en" lang="en">${E(t.en)}</b><span>${E(t.vi)}</span><span class="spacer"></span>${P.sayBtn(t.en)}</div>`).join('')}</div>`;
+
+  function intro() {
+    stop();
+    const n = pool().length, b = best[key()];
+    stage.innerHTML = `<div class="g-intro"><div class="t">${st.game === 'match' ? u('match') : u('rush')}</div>
+      <p class="muted">${n} ${u('inScope')}${b != null ? ` · ${u('best')}: ${P.num(b)}${st.game === 'match' ? ' ' + u('sec') : ''}` : ''}</p>${playBtn(u('play'))}</div>`;
+  }
+  function start() {
+    stop();
+    if (pool().length < 6) { stage.innerHTML = `<p style="padding:30px;text-align:center">${u('need')}</p>`; return; }
+    running = true;
+    if (st.game === 'match') match(); else rush();
+    stage.scrollIntoView({ block: 'nearest' });
+  }
+
+  /* ----- Ghép cặp ----- */
+  function match() {
+    const ts = P.shuffle(pool()).slice(0, 6);
+    const cards = P.shuffle(ts.flatMap(t => [{ id: t.id, txt: t.vi, lang: 'vi' }, { id: t.id, txt: t.en, lang: 'en' }]));
+    let sel = null, left = 6, miss = 0; const t0 = Date.now();
+    stage.innerHTML = `<div class="hud"><span class="pill-h">${u('time')}: <b id="tm">0</b> ${u('sec')}</span><span class="pill-h">${u('pairs')}: <b id="pr">0</b>/6</span></div>
+      <div class="mgrid">${cards.map((c, i) => `<button type="button" class="mcard ${c.lang === 'en' ? 'en-c' : ''}" data-i="${i}"${c.lang === 'en' ? ' lang="en"' : ''}>${E(c.txt)}</button>`).join('')}</div>`;
+    timer = setInterval(() => { const el = document.getElementById('tm'); if (el) el.textContent = Math.floor((Date.now() - t0) / 1000); }, 250);
+    stage.onclick = e => {
+      const b = e.target.closest('.mcard'); if (!b || b.classList.contains('gone')) return;
+      const c = cards[+b.dataset.i];
+      if (c.lang === 'en') P.speak(c.txt);
+      if (!sel) { sel = b; b.classList.add('sel'); return; }
+      if (sel === b) { b.classList.remove('sel'); sel = null; return; }
+      const s = cards[+sel.dataset.i];
+      if (s.id === c.id && s.lang !== c.lang) {
+        sel.classList.add('gone'); b.classList.add('gone'); sel = null; left--;
+        document.getElementById('pr').textContent = 6 - left;
+        if (!left) {
+          stop(); const sec = Math.round((Date.now() - t0) / 100) / 10;
+          if (best[key()] == null || sec < best[key()]) { best[key()] = sec; P.set('gbest', best); }
+          stage.innerHTML = `<div class="g-end"><div class="t">${u('done')}</div>
+            <p>${u('time')}: <b>${P.num(sec)} ${u('sec')}</b> · ${u('miss')}: ${miss} · ${u('best')}: ${P.num(best[key()])} ${u('sec')}</p>
+            ${listHTML(ts)}${playBtn(u('again'))}</div>`;
+        }
+      } else {
+        miss++; const a = sel; a.classList.add('bad'); b.classList.add('bad'); a.classList.remove('sel'); sel = null;
+        setTimeout(() => { a.classList.remove('bad'); b.classList.remove('bad'); }, 450);
+      }
+    };
+  }
+
+  /* ----- Nhanh tay ----- */
+  function rush() {
+    const all = pool(); let score = 0, streak = 0, bestStreak = 0, left = 60, cur = null; const wrong = [];
+    stage.innerHTML = `<div class="hud"><span class="pill-h">${u('score')}: <b id="sc2">0</b></span><span class="pill-h">${u('streak')}: <b id="stk">0</b></span><span class="spacer"></span><span class="pill-h"><b id="tl">60</b> ${u('sec')}</span></div>
+      <div class="bar"><i id="tb" style="width:100%"></i></div><div class="rush-q" id="rq"></div><div class="rush-opts" id="ro"></div>`;
+    const next = () => {
+      let t; do { t = all[Math.floor(Math.random() * all.length)]; } while (cur && t === cur.t);
+      const opts = P.shuffle([t, ...P.shuffle(all.filter(x => x.id !== t.id && x.vi !== t.vi && x.en !== t.en)).slice(0, 3)]);
+      cur = { t, opts };
+      const showVi = st.mode === 've';
+      document.getElementById('rq').innerHTML = st.mode === 'lv'
+        ? `<button type="button" class="btn cta lg" data-say="${E(t.en)}">${P.icon('speak')} ${u('listen')}</button>`
+        : `<div class="w"${showVi ? '' : ' lang="en"'}>${E(showVi ? t.vi : t.en)}</div>${showVi ? '' : `<div class="ipa">${E(t.ipa || '')}</div>`}`;
+      document.getElementById('ro').innerHTML = opts.map((o, k) => `<button type="button" data-k="${k}"${showVi ? ' lang="en"' : ''}>${E(showVi ? o.en : o.vi)}</button>`).join('');
+      if (st.mode === 'lv') P.speak(t.en);
+    };
+    stage.onclick = e => {
+      const b = e.target.closest('#ro button'); if (!b || !cur || stage.dataset.lock) return;
+      const ok = cur.opts[+b.dataset.k] === cur.t;
+      stage.dataset.lock = 1;
+      if (ok) { score++; streak++; bestStreak = Math.max(bestStreak, streak); b.classList.add('right'); }
+      else { streak = 0; b.classList.add('wrong'); stage.querySelectorAll('#ro button')[cur.opts.indexOf(cur.t)].classList.add('right'); if (!wrong.includes(cur.t)) wrong.push(cur.t); }
+      document.getElementById('sc2').textContent = score; document.getElementById('stk').textContent = streak;
+      tmo = setTimeout(() => { tmo = null; delete stage.dataset.lock; if (left > 0) next(); }, ok ? 350 : 900);
+    };
+    next();
+    timer = setInterval(() => {
+      left--; const tl = document.getElementById('tl'); if (tl) tl.textContent = left; const tb = document.getElementById('tb'); if (tb) tb.style.width = (left / 60 * 100) + '%';
+      if (left <= 0) {
+        stop();
+        if (best[key()] == null || score > best[key()]) { best[key()] = score; P.set('gbest', best); }
+        stage.innerHTML = `<div class="g-end"><div class="t">${u('done')}</div>
+          <p>${u('score')}: <b>${score}</b> · ${u('maxStreak')}: ${bestStreak} · ${u('best')}: ${best[key()]}</p>
+          ${wrong.length ? `<p class="cap" style="margin-bottom:6px">${u('wrongList')}</p>${listHTML(wrong)}` : ''}${playBtn(u('again'))}</div>`;
+      }
+    }, 1000);
+  }
+  syncGame(); intro();
+})();
+</script>
+</body></html>

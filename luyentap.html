@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luyện tập · Phys10 Bilingual</title>
+<meta name="description" content="Học liệu song ngữ Việt – Anh môn Vật lí 10 (SGK Kết nối tri thức với cuộc sống).">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Charis+SIL:wght@400;700&display=swap" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<main id="page" class="wrap"><div id="root"></div></main>
+<noscript><p style="padding:20px">Trang này cần bật JavaScript để hiển thị nội dung.</p></noscript>
+<script src="data/core.js"></script>
+<script src="data/ch4.js"></script>
+<script src="data/ch5.js"></script>
+<script src="data/ch6.js"></script>
+<script src="data/ch7.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const P = P10, E = P.esc, en = P.uiEn();
+  const U = {
+    title: ['Luyện tập theo chương', 'Chapter practice'], short: ['Luyện tập', 'Practice'], eyebrow: ['4 đề · chấm điểm ngay', '4 tests · instant marking'],
+    lead: ['Mỗi đề gồm 3 phần như đề kiểm tra hiện hành: trắc nghiệm nhiều lựa chọn, đúng – sai, trả lời ngắn. Làm xong bấm "Nộp bài" để xem điểm và lời giải; câu sai có đường dẫn về bài cần xem lại. Bài đang làm dở được giữ lại khi em đổi mức ngôn ngữ.',
+      'Each test has 3 parts like current school tests: multiple choice, true/false and short answer. Press "Submit" to see your score and solutions; wrong answers link to the lesson to review. Your answers are kept when you change the language level.'],
+    p1: ['Trắc nghiệm nhiều lựa chọn', 'Multiple choice'], p2: ['Đúng – sai', 'True or false'], p3: ['Trả lời ngắn', 'Short answer'], part: ['Phần', 'Part'],
+    p1d: ['Mỗi câu chọn một phương án đúng.', 'Choose one correct option for each question.'],
+    p2d: ['Mỗi ý a), b), c), d) chọn Đúng hoặc Sai.', 'For each statement a)–d), choose True or False.'],
+    p3d: ['Ghi đáp số (chỉ ghi số, dùng dấu phẩy hoặc dấu chấm thập phân).', 'Write the number only (decimal comma or point both accepted).'],
+    T: ['Đúng', 'True'], F: ['Sai', 'False'], submit: ['Nộp bài', 'Submit'], again: ['Làm lại', 'Try again'], ans: ['Đáp số', 'Answer'],
+    start: ['Bắt đầu', 'Start'], resume: ['Làm tiếp', 'Resume'], q: ['câu', 'questions'], min: ['phút', 'min'], best: ['Điểm cao nhất', 'Best'],
+    res: ['Điểm quy đổi thang 10', 'Score out of 10'], score: ['Điểm', 'Score'], did: ['Đã làm', 'Answered'],
+    unanswered: ['Còn câu chưa làm. Vẫn nộp bài?', 'Some questions are unanswered. Submit anyway?'],
+    ruleT: ['Cách tính điểm', 'How it is marked'],
+    rule: ['Trắc nghiệm 0,25 điểm/câu; đúng – sai 0,1 / 0,25 / 0,5 / 1 điểm khi đúng 1 / 2 / 3 / 4 ý; trả lời ngắn 0,25 điểm/câu; tổng nhân 2 để quy về thang 10.',
+      'Multiple choice 0.25 per question; true/false 0.1 / 0.25 / 0.5 / 1 for 1 / 2 / 3 / 4 correct statements; short answer 0.25 each; total × 2 gives a mark out of 10.'],
+    time: ['Thời gian gợi ý', 'Suggested time'], map: ['Bản đồ câu hỏi', 'Question map']
+  };
+  const u = k => en ? U[k][1] : U[k][0];
+  P.mount('practice', { title: u('title') });
+  const root = document.getElementById('root');
+  const c = +P.qs('c');
+  const C = P.chapters.find(x => x.n === c && x.quiz);
+  const best = P.get('best', {});
+
+  if (!C) {
+    root.innerHTML = `<div class="page-hero"><span class="hero-ic">${P.icon('pen')}</span><h1>${u('title')}</h1><span class="eyebrow">${u('eyebrow')}</span></div>
+      <p class="lead">${u('lead')}</p>
+      <div class="grid g4">${P.chapters.filter(x => x.quiz).map(x => {
+        const z = x.quiz, nq = z.mcq.length + z.tf.length + z.short.length, d = P.sget('quiz-' + x.n, null);
+        return `<a class="prac lift c${x.n}" href="luyentap.html?c=${x.n}">${P.pic(x.n)}<div class="b"><small>${P.ui('chapter')} ${P.ROMAN[x.n]}</small><h3>${E(P.T(x.chapter))}</h3>
+          ${P.lang === 'bi' ? `<div class="en" lang="en">${E(x.chapter.en)}</div>` : ''}
+          <div class="small muted">${nq} ${u('q')} · ${z.minutes} ${u('min')}</div>
+          ${best[x.n] != null ? `<div><span class="pill ok">${u('best')}: ${P.num(best[x.n])}</span></div>` : ''}
+          <span class="spacer"></span><span class="btn cta sm">${d && !d.done ? u('resume') : u('start')} ${P.icon('arrow')}</span></div></a>`;
+      }).join('')}</div>
+      <div class="panel has-lab" style="margin-top:34px"><div class="lab">${P.icon('info')}<span>${u('ruleT')}</span></div>${u('rule')}</div>`;
+    return;
+  }
+
+  const Z = C.quiz, LET = ['a', 'b', 'c', 'd'];
+  const total = Z.mcq.length + Z.tf.reduce((a, q) => a + q.items.length, 0) + Z.short.length;
+  /* Bài đang làm được lưu tạm theo thẻ trình duyệt: không mất khi đổi mức ngôn ngữ hoặc lỡ tải lại trang */
+  const key = 'quiz-' + C.n;
+  let S;
+  const load = () => { S = Object.assign({ m: {}, t: {}, s: [], done: false }, P.sget(key, {})); };
+  const save = () => P.sset(key, S);
+  const both = (o, inline) => P.dual(o, { inline, noHint: !!inline });
+  const num = s => { s = String(s == null ? '' : s).trim().replace(/\s/g, '').replace(',', '.'); return s === '' ? NaN : Number(s); };
+  const mapEl = k => root.querySelector(`[data-map="${k}"]`);
+  const nAns = () => Object.keys(S.m).length + Object.values(S.t).reduce((a, x) => a + Object.keys(x).length, 0) + Z.short.filter((q, i) => (S.s[i] || '').trim()).length;
+
+  function build() {
+    const partH = (i, k, d) => `<div class="part-h"><span class="num-dot">${['I', 'II', 'III'][i]}</span><h2>${u(k)}</h2></div><p class="small muted">${u(d)}</p>`;
+    let h = `<div class="quiz-strip"><h1><small><a href="luyentap.html">${u('short')}</a> · ${P.ui('chapter')} ${P.ROMAN[C.n]}</small>${E(P.T(C.chapter))}</h1>
+        <span class="done"><span id="stripRes">${u('did')} <span id="nDone">0</span>/${total}</span><span class="pbar"><i id="pDone"></i></span></span>
+        <button type="button" class="btn cta" id="submit">${u('submit')}</button></div>
+      <div id="result" class="card result" hidden></div>
+      <div class="quiz-grid"><aside class="card qmap" aria-label="${u('map')}">
+        <div class="cap">${u('part')} I · ${u('p1')}</div><div class="nums">${Z.mcq.map((q, i) => `<a href="#qm${i}" data-map="m${i}">${i + 1}</a>`).join('')}</div>
+        <div class="cap">${u('part')} II · ${u('p2')}</div><div class="nums">${Z.tf.map((q, i) => `<a href="#qt${i}" data-map="t${i}">${i + 1}</a>`).join('')}</div>
+        <div class="cap">${u('part')} III · ${u('p3')}</div><div class="nums">${Z.short.map((q, i) => `<a href="#qs${i}" data-map="s${i}">${i + 1}</a>`).join('')}</div>
+        <p class="small muted" style="margin:12px 0 0">${u('time')}: ${Z.minutes} ${u('min')}.<br>${u('rule')}</p></aside><div>`;
+    h += partH(0, 'p1', 'p1d') + Z.mcq.map((q, i) => `<div class="q-item" id="qm${i}" data-i="${i}"><div class="qt"><span class="num">${i + 1}</span>${both(q.q)}</div>
+        <div class="opts">${q.o.map((o, k) => `<button type="button" class="opt" data-k="${k}"><span class="k">${P.KEYS[k]}</span><span>${both(o, true)}</span></button>`).join('')}</div><div class="why" hidden></div></div>`).join('');
+    h += partH(1, 'p2', 'p2d') + Z.tf.map((q, i) => `<div class="q-item" id="qt${i}" data-i="${i}"><div class="qt"><span class="num">${i + 1}</span>${both(q.stem)}</div>
+        ${q.items.map((it, j) => `<div class="tf-row" data-j="${j}"><span class="tf-k">${LET[j]})</span><div>${both(it.s, true)}</div><div class="tf-btns"><button type="button" data-v="1">${u('T')}</button><button type="button" data-v="0">${u('F')}</button></div><div class="why" hidden></div></div>`).join('')}</div>`).join('');
+    h += partH(2, 'p3', 'p3d') + Z.short.map((q, i) => `<div class="q-item" id="qs${i}"><div class="qt"><span class="num">${i + 1}</span>${both(q.q)}</div>
+        <div class="row"><label class="small muted" for="s${i}">${u('ans')}:</label><input type="text" inputmode="decimal" autocomplete="off" id="s${i}" data-s="${i}" style="width:160px"> <span>${q.unit ? P.fm(q.unit) : ''}</span></div><div class="why" hidden></div></div>`).join('');
+    root.innerHTML = h + `</div></div>`;
+    Object.keys(S.m).forEach(i => { const o = root.querySelector(`#qm${i} .opt[data-k="${S.m[i]}"]`); if (o) o.classList.add('sel'); });
+    Object.keys(S.t).forEach(i => Object.keys(S.t[i]).forEach(j => { const b = root.querySelector(`#qt${i} .tf-row[data-j="${j}"] button[data-v="${S.t[i][j] ? 1 : 0}"]`); if (b) b.classList.add('sel'); }));
+    Z.short.forEach((q, i) => { document.getElementById('s' + i).value = S.s[i] || ''; });
+    if (S.done) grade(true); else refresh();
+  }
+
+  function refresh() {
+    const n = nAns();
+    document.getElementById('nDone').textContent = n;
+    document.getElementById('pDone').style.width = n / total * 100 + '%';
+    Z.mcq.forEach((q, i) => mapEl('m' + i).classList.toggle('did', S.m[i] != null));
+    Z.tf.forEach((q, i) => mapEl('t' + i).classList.toggle('did', Object.keys(S.t[i] || {}).length === q.items.length));
+    Z.short.forEach((q, i) => mapEl('s' + i).classList.toggle('did', !!(S.s[i] || '').trim()));
+  }
+
+  const why = (el, ok, o, l) => {
+    el.hidden = false; el.classList.toggle('bad', !ok);
+    el.innerHTML = `<b>${ok ? P.ui('correct') : P.ui('wrong')}.</b> ${P.lang === 'bi' ? `${P.fmt(o.vi)}<div class="en" lang="en">${P.fmt(o.en)}</div>` : P.fmt(P.T(o))}${!ok && l ? ` <a href="bai.html?n=${l}">${P.ui('seeLesson')} ${l} →</a>` : ''}`;
+  };
+
+  function grade(restoring) {
+    const part = [0, 0, 0], tfPts = [0, .1, .25, .5, 1];
+    Z.mcq.forEach((q, i) => {
+      const it = document.getElementById('qm' + i), k = S.m[i], ok = k === q.a; if (ok) part[0] += .25;
+      it.querySelectorAll('.opt').forEach(o => { o.disabled = true; o.classList.remove('sel'); if (+o.dataset.k === q.a) o.classList.add('right'); else if (+o.dataset.k === k) o.classList.add('wrong'); });
+      why(it.querySelector('.why'), ok, q.why, q.l); mapEl('m' + i).className = ok ? 'right' : 'wrong';
+    });
+    Z.tf.forEach((q, i) => {
+      const it = document.getElementById('qt' + i); let r = 0;
+      q.items.forEach((x, j) => {
+        const row = it.querySelector(`.tf-row[data-j="${j}"]`), v = (S.t[i] || {})[j], ok = v === x.a; if (ok) r++;
+        row.querySelectorAll('.tf-btns button').forEach(b => { b.disabled = true; b.classList.remove('sel'); const bv = b.dataset.v === '1'; if (bv === x.a) b.classList.add('right'); else if (v === bv) b.classList.add('wrong'); });
+        why(row.querySelector('.why'), ok, x.why, q.l);
+      });
+      part[1] += tfPts[r]; mapEl('t' + i).className = r === q.items.length ? 'right' : r ? 'part' : 'wrong';
+    });
+    Z.short.forEach((q, i) => {
+      const it = document.getElementById('qs' + i), inp = document.getElementById('s' + i); inp.disabled = true;
+      const v = num(inp.value), a = num(q.ans), ok = !isNaN(v) && Math.abs(v - a) <= (q.tol || 0) + 1e-9; if (ok) part[2] += .25;
+      const unit = q.unit ? ' ' + q.unit : '';
+      why(it.querySelector('.why'), ok, { vi: `Đáp số: ${P.numVi(q.ans)}${unit}. ${q.why.vi}`, en: `Answer: ${String(q.ans).replace(',', '.')}${unit}. ${q.why.en}` }, q.l);
+      mapEl('s' + i).className = ok ? 'right' : 'wrong';
+    });
+    const max = [Z.mcq.length * .25, Z.tf.length, Z.short.length * .25], k10 = 10 / (max[0] + max[1] + max[2]);
+    const r2 = x => Math.round(x * 100) / 100;
+    const score = r2((part[0] + part[1] + part[2]) * k10);
+    const r = document.getElementById('result'); r.hidden = false;
+    r.innerHTML = `<div><div class="small muted">${u('res')}</div><div class="score">${P.num(score)}</div></div>
+      <div class="parts">${['p1', 'p2', 'p3'].map((k, i) => `<span class="pill plain">${u('part')} ${['I', 'II', 'III'][i]} · ${u(k)}: <b>${P.num(r2(part[i] * k10))}</b> / ${P.num(r2(max[i] * k10))}</span>`).join('')}</div>
+      <button type="button" class="btn ghost" id="redo">${P.icon('redo')} ${u('again')}</button>`;
+    document.getElementById('submit').hidden = true;
+    document.getElementById('stripRes').textContent = `${u('score')}: ${P.num(score)} / 10`;
+    document.getElementById('pDone').style.width = score * 10 + '%';
+    if (restoring) return;
+    if (best[C.n] == null || score > best[C.n]) { best[C.n] = score; P.set('best', best); }
+    const hist = P.get('quizzes', []); hist.push({ at: Date.now(), ch: C.n, mark: score, lang: P.lang }); P.set('quizzes', hist.slice(-100));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  root.addEventListener('click', e => {
+    if (e.target.closest('#submit')) {
+      if (S.done || (nAns() < total && !confirm(u('unanswered')))) return;
+      S.done = true; save(); grade(false); return;
+    }
+    if (e.target.closest('#redo')) { P.sset(key, null); load(); build(); window.scrollTo(0, 0); return; }
+    if (S.done) return;
+    const o = e.target.closest('.opt');
+    if (o) { const it = o.closest('.q-item'); it.querySelectorAll('.opt').forEach(x => x.classList.toggle('sel', x === o)); S.m[it.dataset.i] = +o.dataset.k; save(); refresh(); return; }
+    const b = e.target.closest('.tf-btns button');
+    if (b) { const row = b.closest('.tf-row'), it = b.closest('.q-item'); row.querySelectorAll('.tf-btns button').forEach(x => x.classList.toggle('sel', x === b)); (S.t[it.dataset.i] = S.t[it.dataset.i] || {})[row.dataset.j] = b.dataset.v === '1'; save(); refresh(); }
+  });
+  root.addEventListener('input', e => { const i = e.target.dataset ? e.target.dataset.s : null; if (i != null && !S.done) { S.s[+i] = e.target.value; save(); refresh(); } });
+  load(); build();
+})();
+</script>
+</body></html>

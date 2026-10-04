@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bài học · Phys10 Bilingual</title>
+<meta name="description" content="Học liệu song ngữ Việt – Anh môn Vật lí 10 (SGK Kết nối tri thức với cuộc sống).">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Charis+SIL:wght@400;700&display=swap" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<main id="page" class="wrap"><div id="root"></div></main>
+<noscript><p style="padding:20px">Trang này cần bật JavaScript để hiển thị nội dung.</p></noscript>
+<script src="data/core.js"></script>
+<script src="data/ch4.js"></script>
+<script src="data/ch5.js"></script>
+<script src="data/ch6.js"></script>
+<script src="data/ch7.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const P = P10, E = P.esc, en = P.uiEn(), prog = P.progress();
+  let h = `<div class="page-hero"><span class="hero-ic">${P.icon('book')}</span><h1>${P.ui('lessons')}</h1><span class="eyebrow">${en ? 'Semester 2' : 'Học kì II'} · ${P.allLessons.length} ${en ? 'lessons' : 'bài'}</span></div>
+    <p class="lead">${en ? 'Vật lí 10 textbook (Kết nối tri thức), semester 2. A green tick means you have opened the lesson; the number is your score on "Check yourself".' : 'SGK Vật lí 10 Kết nối tri thức, học kì II. Dấu tích xanh: em đã mở bài; số bên cạnh: số câu đúng ở phần Tự kiểm tra.'}</p>`;
+  P.chapters.forEach(c => {
+    const done = c.lessons.filter(l => prog[l.n]).length;
+    h += `<section class="card ch-sec c${c.n}" id="c${c.n}">
+      <header class="ch-sec-h">${P.pic(c.n, true)}
+        <div><small>${P.ui('chapter')} ${P.ROMAN[c.n]} · ${P.ui('page')} ${c.chapter.page}</small>
+          <h2>${E(P.T(c.chapter))}</h2>${P.lang === 'bi' ? `<div class="en" lang="en">${E(c.chapter.en)}</div>` : ''}
+          <div class="pbar"><i style="width:${done / c.lessons.length * 100}%"></i></div>
+          <div class="small muted">${P.ui('done')} ${done} / ${c.lessons.length} ${en ? 'lessons' : 'bài'}</div></div>
+        <a class="btn ghost sm" href="luyentap.html?c=${c.n}">${P.icon('pen')} ${P.ui('practice')} ${P.ui('chapter').toLowerCase()} ${P.ROMAN[c.n]}</a></header>
+      <div class="l-rows">${c.lessons.map(l => {
+        const p = prog[l.n];
+        return `<a class="l-row" href="bai.html?n=${l.n}"><span class="l-n">${l.n}</span>
+          <span class="l-t"><b>${E(P.T(l))}</b>${P.lang === 'bi' ? `<span class="en" lang="en">${E(l.en)}</span>` : ''}</span>
+          ${l.practical ? `<span class="pill">${P.ui('practical')}</span>` : ''}<span class="l-pg">${P.ui('page')} ${E(l.pages)}</span>
+          <span class="l-st">${p ? `${P.icon('check')}${p.check != null ? `${p.check}/${l.check.length}` : ''}` : ''}</span></a>`;
+      }).join('')}</div></section>`;
+  });
+  document.getElementById('root').innerHTML = h;
+  P.mount('lessons', { title: P.ui('lessons') });
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }
+})();
+</script>
+</body></html>

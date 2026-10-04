@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bài học · Phys10 Bilingual</title>
+<meta name="description" content="Học liệu song ngữ Việt – Anh môn Vật lí 10 (SGK Kết nối tri thức với cuộc sống).">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Charis+SIL:wght@400;700&display=swap" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<main id="page" class="wrap"><div id="root"></div></main>
+<noscript><p style="padding:20px">Trang này cần bật JavaScript để hiển thị nội dung.</p></noscript>
+<script src="data/core.js"></script>
+<script src="data/ch4.js"></script>
+<script src="data/ch5.js"></script>
+<script src="data/ch6.js"></script>
+<script src="data/ch7.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const P = P10, E = P.esc, en = P.uiEn();
+  const n = +P.qs('n') || P.allLessons[0].n;
+  const L = P.lessonMap[n] || P.allLessons[0];
+  const C = P.chapters.find(c => c.n === L.chapter);
+  const idx = P.allLessons.indexOf(L);
+  const prev = P.allLessons[idx - 1], next = P.allLessons[idx + 1];
+  P.markLesson(L.n, {});
+  const prog = P.progress();
+  const ng = b => b.ngoaiSGK ? ' ngoai' : '';
+  const both = o => P.lang === 'bi' ? `${P.fmt(o.vi)}<div class="en" lang="en">${P.fmt(o.en)}</div>` : P.fmt(P.T(o));
+  const fstr = f => typeof f === 'string' ? f : (en ? f.en : f.vi);
+  const HINT = {
+    vi: 'Mức 1 · Tiếng Việt: chạm vào thuật ngữ <span class="term" style="cursor:default">tô vàng</span> để xem tiếng Anh và nghe phát âm.',
+    bi: 'Mức 2 · Song ngữ: mỗi đoạn tiếng Việt có bản tiếng Anh ngay bên dưới.',
+    en: 'Level 3 · English: press <span class="hint-btn" style="margin:0">VI</span> for a Vietnamese hint; tap a <span class="term" style="cursor:default">highlighted</span> term for its meaning.'
+  };
+
+  function block(b) {
+    switch (b.t) {
+      case 'h': return `<h2 class="sec-title">${P.dual(b, { noHint: true })}</h2>`;
+      case 'p': return `<div class="blk${ng(b)}">${P.dualBlock(b)}</div>`;
+      case 'law': return `<div class="blk panel has-lab${ng(b)}"><div class="lab">${P.icon('law')}<span>${b.name ? P.dual(b.name, { inline: true, noHint: true }) : (en ? 'Key idea' : 'Ghi nhớ')}</span></div>${P.dualBlock(b)}</div>`;
+      case 'note': return `<div class="blk panel orange has-lab${ng(b)}"><div class="lab orange">${P.icon('bulb')}<span>${en ? 'Note' : 'Lưu ý'}</span></div>${P.dualBlock(b)}</div>`;
+      case 'f': {
+        const rows = (b.sym || []).map(s => `<tr><td>${P.fm(s.s)}</td><td>${P.dual({ vi: s.vi, en: s.en }, { inline: true, noHint: true })}</td><td>${s.u ? P.fm(s.u) : ''}</td></tr>`).join('');
+        return `<div class="blk formula${ng(b)}"><div class="fx">${P.fm(fstr(b.f))}${b.no ? `<span class="no">(${E(b.no)})</span>` : ''}</div>
+          ${b.vi || b.en ? `<div class="fd">${P.dual(b)}</div>` : ''}${rows ? `<table>${rows}</table>` : ''}</div>`;
+      }
+      case 'table': {
+        const th = b.head.map(c => `<th>${P.dual(c, { inline: true, noHint: true })}</th>`).join('');
+        const tr = b.rows.map(r => `<tr>${r.map(c => `<td>${P.dual(c, { inline: P.lang === 'bi', noHint: true })}</td>`).join('')}</tr>`).join('');
+        return `<div class="blk tbl${ng(b)}"><table><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table></div>`;
+      }
+      case 'ex': {
+        const pick = k => P.lang === 'en' ? P.fmt(b.en[k]) : P.lang === 'bi' ? `${P.fmt(b.vi[k])}<div class="en" lang="en">${P.fmt(b.en[k])}</div>` : P.fmt(b.vi[k]);
+        return `<div class="blk ex${ng(b)}"><div class="q"><div class="cap">${en ? 'Worked example' : 'Ví dụ'}</div>${pick('q')}</div><details><summary>${P.ui('showAns')}</summary><div class="a">${pick('a')}</div></details></div>`;
+      }
+      default: return '';
+    }
+  }
+
+  /* Cột trái: các bài trong chương */
+  const nDone = C.lessons.filter(l => prog[l.n]).length;
+  const side = `<aside class="l-side c${C.n}" aria-label="${P.ui('chapter')} ${P.ROMAN[C.n]}">
+    <div class="l-side-h"><span class="ch-ic">${P.icon(P.CH_ICON[C.n])}</span><div><small>${P.ui('chapter')} ${P.ROMAN[C.n]}</small><b>${E(P.T(C.chapter))}</b></div></div>
+    <ol>${C.lessons.map(l => `<li><a href="bai.html?n=${l.n}"${l === L ? ' class="on" aria-current="page"' : ''}><small>${P.ui('lesson')} ${l.n}${prog[l.n] ? `<span class="ok-ic">${P.icon('check')}</span>` : ''}</small>${E(P.T(l))}</a></li>`).join('')}</ol>
+    <div class="pbar"><i style="width:${nDone / C.lessons.length * 100}%"></i></div>
+    <div class="st">${P.ui('done')} ${nDone} / ${C.lessons.length} ${en ? 'lessons' : 'bài'}</div>
+    <a class="btn ghost sm" href="luyentap.html?c=${C.n}">${P.icon('pen')} ${P.ui('practice')} ${P.ui('chapter').toLowerCase()} ${P.ROMAN[C.n]}</a></aside>`;
+
+  /* Cột giữa: nội dung bài */
+  let h = `<div class="crumb"><a href="baihoc.html">${P.ui('lessons')}</a> › <a href="baihoc.html#c${C.n}">${P.ui('chapter')} ${P.ROMAN[C.n]}. ${E(P.T(C.chapter))}</a></div>
+    <header class="lesson-head"><div class="meta">${P.ui('lesson')} ${L.n} · ${P.ui('page')} ${E(L.pages)}${L.practical ? ' · ' + P.ui('practical') : ''}</div>
+    <h1>${E(P.T(L))}</h1>${P.lang === 'bi' ? `<div class="sub" lang="en">${E(L.en)}</div>` : en ? `<div class="sub" lang="vi" style="font-family:var(--font);font-style:normal;font-size:1rem">${E(L.vi)}</div>` : ''}</header>
+    <div class="lv-hint"><span class="num-dot">${{ vi: 1, bi: 2, en: 3 }[P.lang]}</span><span>${HINT[P.lang]}</span></div>`;
+  if (L.intro) h += `<div class="blk">${P.dualBlock(L.intro)}</div>`;
+  if (L.goals) h += `<div class="panel orange has-lab goals"><div class="lab orange">${P.icon('target')}<span>${P.ui('goals')}</span></div><ul>${L.goals.map(g => `<li>${P.dual(g, { inline: true })}</li>`).join('')}</ul></div>`;
+  h += L.blocks.map(block).join('');
+  if (L.summary) h += `<section class="panel has-lab summary" style="margin-top:36px"><div class="lab">${P.icon('check')}<span>${P.ui('learned')}</span></div><ul>${L.summary.map(s => `<li>${both(s)}</li>`).join('')}</ul></section>`;
+  if (L.check && L.check.length) {
+    h += `<h2 class="sec-title" id="tu-kiem-tra">${P.ui('check')} · ${L.check.length} ${en ? 'questions' : 'câu'}</h2><div id="chk">${L.check.map((q, i) => P.mcqHTML(q, i)).join('')}</div>
+      <div class="row"><b id="chkRes"></b><span class="spacer"></span><button type="button" class="btn ghost sm" id="chkRedo" hidden>${P.icon('redo')} ${P.ui('redo')}</button></div>`;
+  }
+  h += `<div class="l-nav">${prev ? `<a class="btn ghost" href="bai.html?n=${prev.n}">${P.icon('back')} ${P.ui('lesson')} ${prev.n}</a>` : ''}<span class="spacer"></span>
+    ${next ? `<a class="btn cta" href="bai.html?n=${next.n}">${P.ui('next')}: ${P.ui('lesson')} ${next.n} ${P.icon('arrow')}</a>` : `<a class="btn cta" href="luyentap.html?c=${C.n}">${P.ui('practice')} ${P.icon('arrow')}</a>`}</div>`;
+
+  /* Cột phải: thuật ngữ của bài, học tiếp */
+  const ts = C.terms.filter(t => t.l === L.n);
+  let aside = '';
+  if (ts.length) aside += `<h2 class="cap">${P.ui('termOf')} · ${ts.length}</h2><div class="minis">${ts.map(t => `<div class="mini c${t.ch}"><div class="top"><div style="flex:1;min-width:0"><b${en ? ' lang="en"' : ''}>${E(en ? t.en : t.vi)}</b><span class="${en ? 'small muted' : 'en'}" style="display:block"${en ? '' : ' lang="en"'}>${E(en ? t.vi : t.en)}</span></div>${P.sayBtn(t.en)}</div>
+      <div class="ipa">${E(t.ipa || '')}${t.sym ? ` · ${P.fm(t.sym)}` : ''}</div><div style="margin-top:5px">${P.dictHTML(t.en)}</div></div>`).join('')}</div>
+    <p class="row" style="margin-top:10px"><a class="btn ghost sm" href="thuatngu.html?l=${L.n}&mode=flash">${P.icon('cards')} ${en ? 'Flashcards' : 'Thẻ ghi nhớ'}</a>
+    <a class="btn ghost sm" href="trochoi.html?l=${L.n}">${P.icon('game')} ${en ? 'Term game' : 'Trò chơi'}</a></p>`;
+  aside += `<div class="panel orange has-lab next-box"><div class="lab orange">${P.icon('arrow')}<span>${en ? 'Keep going' : 'Học tiếp'}</span></div>
+    ${prev ? `<a class="nx" href="bai.html?n=${prev.n}">${P.icon('back')}<span><small>${P.ui('prev')}</small>${P.ui('lesson')} ${prev.n}. ${E(P.T(prev))}</span></a>` : ''}
+    ${next ? `<a class="nx" href="bai.html?n=${next.n}">${P.icon('arrow')}<span><small>${P.ui('next')}</small>${P.ui('lesson')} ${next.n}. ${E(P.T(next))}</span></a>` : ''}
+    <a class="nx" href="luyentap.html?c=${C.n}">${P.icon('pen')}<span><small>${en ? 'After the chapter' : 'Sau khi học xong chương'}</small>${P.ui('practice')} ${P.ui('chapter').toLowerCase()} ${P.ROMAN[C.n]}</span></a></div>`;
+
+  document.getElementById('root').innerHTML = `<div class="lesson-grid">${side}<article class="card l-main c${C.n}">${h}</article><aside class="l-aside" aria-label="${P.ui('termOf')}">${aside}</aside></div>`;
+  P.mount('lessons', { title: `${P.ui('lesson')} ${L.n}. ${P.T(L)}` });
+
+  /* Tự kiểm tra: chấm ngay từng câu; câu đã chọn được giữ lại khi đổi mức ngôn ngữ hoặc tải lại trang */
+  const chk = document.getElementById('chk');
+  if (chk) {
+    const key = 'chk-' + L.n, res = document.getElementById('chkRes'), redo = document.getElementById('chkRedo');
+    let picks = P.sget(key, {}), done = 0, right = 0;
+    const answer = (i, k) => {
+      const item = chk.querySelector(`.q-item[data-q="${i}"]`), q = L.check[i];
+      if (!item || !q || item.dataset.done) return;
+      item.dataset.done = 1; done++;
+      item.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (+o.dataset.k === q.a) o.classList.add('right'); else if (+o.dataset.k === k) o.classList.add('wrong'); });
+      const ok = k === q.a; if (ok) right++;
+      const w = item.querySelector('.why'); w.hidden = false; w.classList.toggle('bad', !ok);
+      w.innerHTML = `<b>${ok ? P.ui('correct') : P.ui('wrong')}.</b> ${both(q.why)}`;
+      res.textContent = `${right}/${done}` + (done === L.check.length ? (en ? ' correct.' : ' câu đúng.') : '');
+      redo.hidden = false;
+    };
+    Object.keys(picks).forEach(i => answer(+i, picks[i]));
+    chk.addEventListener('click', e => {
+      const b = e.target.closest('.opt'); if (!b) return;
+      const item = b.closest('.q-item'); if (item.dataset.done) return;
+      const i = +item.dataset.q, k = +b.dataset.k;
+      answer(i, k); picks[i] = k; P.sset(key, picks);
+      if (done === L.check.length) P.markLesson(L.n, { check: right });
+    });
+    redo.addEventListener('click', () => {
+      picks = {}; done = 0; right = 0; P.sset(key, null);
+      chk.innerHTML = L.check.map((q, i) => P.mcqHTML(q, i)).join('');
+      res.textContent = ''; redo.hidden = true;
+      document.getElementById('tu-kiem-tra').scrollIntoView({ block: 'start' });
+    });
+  }
+})();
+</script>
+</body></html>

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thuật ngữ · Phys10 Bilingual</title>
+<meta name="description" content="Học liệu song ngữ Việt – Anh môn Vật lí 10 (SGK Kết nối tri thức với cuộc sống).">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Charis+SIL:wght@400;700&display=swap" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<main id="page" class="wrap"><div id="root"></div></main>
+<noscript><p style="padding:20px">Trang này cần bật JavaScript để hiển thị nội dung.</p></noscript>
+<script src="data/core.js"></script>
+<script src="data/ch4.js"></script>
+<script src="data/ch5.js"></script>
+<script src="data/ch6.js"></script>
+<script src="data/ch7.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const P = P10, E = P.esc;
+  const en = P.uiEn();
+  const U = {
+    title: ['Kho thuật ngữ', 'Glossary'], cap: ['Vật lí 10 · song ngữ', 'Physics 10 · bilingual'],
+    lead: ['thuật ngữ của bốn chương. Bấm nút loa để nghe phát âm (giọng Anh – Anh của máy); phiên âm IPA theo giọng Anh – Anh.', 'terms from four chapters. Press the speaker to hear the word (your device\'s British English voice); IPA shows British pronunciation.'],
+    list: ['Danh sách', 'List'], flash: ['Thẻ ghi nhớ', 'Flashcards'], test: ['Kiểm tra 10 câu', '10-question test'],
+    all: ['Tất cả', 'All'], search: ['Lọc trong kho: gõ tiếng Việt hoặc tiếng Anh', 'Filter: type Vietnamese or English'],
+    known: ['đã thuộc', 'known'], unk: ['Từ em chưa thuộc', 'Not yet known'], none: ['Không tìm thấy thuật ngữ phù hợp.', 'No matching terms.'],
+    showing: ['Đang hiện', 'Showing'], nTerms: ['thuật ngữ', 'terms'], nKnown: ['đã thuộc', 'known'],
+    flip: ['Chạm vào thẻ để lật', 'Tap the card to flip'], next: ['Thẻ tiếp', 'Next'], prev: ['Thẻ trước', 'Previous'], shuffle: ['Trộn thẻ', 'Shuffle'],
+    dir: ['Mặt trước', 'Front'], fEn: ['Tiếng Anh', 'English'], fVi: ['Tiếng Việt', 'Vietnamese'],
+    tq: ['Chọn nghĩa tiếng Việt đúng', 'Choose the correct Vietnamese meaning'], tq2: ['Chọn thuật ngữ tiếng Anh đúng', 'Choose the correct English term'],
+    res: ['Kết quả', 'Result'], again: ['Làm bài khác', 'New test'], need: ['Cần ít nhất 4 thuật ngữ trong phạm vi đã chọn.', 'At least 4 terms are needed in this scope.'],
+    leave: ['Bài kiểm tra đang làm dở sẽ bị xoá khi đổi mức ngôn ngữ. Vẫn đổi?', 'Your unfinished test will be lost if you change the language level. Change anyway?'],
+    up: ['Em đạt từ 8/10: thử chuyển lên mức ngôn ngữ cao hơn nhé.', 'You scored 8/10 or more: try the next language level.']
+  };
+  const SHORT = { 4: ['Năng lượng', 'Energy'], 5: ['Động lượng', 'Momentum'], 6: ['Chuyển động tròn', 'Circular motion'], 7: ['Biến dạng · Áp suất', 'Deformation · Pressure'] };
+  const u = k => en ? U[k][1] : U[k][0];
+  P.mount('terms', { title: u('title') });
+  let known = P.get('known', {});
+  const st = { ch: +P.qs('ch') || 0, l: +P.qs('l') || 0, q: P.qs('q') || '', mode: P.qs('mode') || 'list', unk: false };
+  const fl = { list: [], i: 0, front: 'en', key: '' };
+  if (!P.lessonMap[st.l]) st.l = 0;
+  if (!P.chapters.some(c => c.n === st.ch)) st.ch = 0;
+  if (st.l) st.ch = P.lessonMap[st.l].chapter;
+  /* Sau khi đổi mức ngôn ngữ: mở lại đúng chỗ đang xem */
+  const saved = P.restore ? P.sget('gl', null) : null; P.sset('gl', null);
+  if (saved) { Object.assign(st, saved.st); fl.i = saved.fi || 0; fl.front = saved.ff || 'en'; }
+  if (!['list', 'flash', 'test'].includes(st.mode)) st.mode = 'list';
+  const focusId = saved ? null : P.qs('id');
+  let testing = false;
+  P.onLang(() => {
+    if (testing && !confirm(u('leave'))) return false;
+    P.sset('gl', { st, fi: fl.i, ff: fl.front });
+  });
+
+  const scope = () => P.allTerms.filter(t => (!st.ch || t.ch === st.ch) && (!st.l || t.l === st.l));
+  const filtered = () => { const q = P.norm(st.q); return scope().filter(t => (!st.unk || !known[t.id]) && (!q || P.norm(t.vi + ' ' + t.en + ' ' + (t.sym || '')).includes(q))); };
+
+  const root = document.getElementById('root');
+  root.innerHTML = `<section class="g-hero"><div style="flex:1;min-width:250px"><div class="cap">${u('cap')}</div><h1>${u('title')}</h1>${P.lang === 'bi' ? '<div class="en" lang="en">Glossary</div>' : ''}
+      <p>${P.allTerms.length} ${u('lead')}</p></div>
+      <div class="g-modes" id="modes">${[['list', 'list'], ['flash', 'cards'], ['test', 'clock']].map(([m, ic]) => `<button type="button" class="btn ghost" data-mode="${m}">${P.icon(ic)} ${u(m)}</button>`).join('')}</div></section>
+    <div class="g-filter"><div class="search-in">${P.icon('search')}<input type="search" id="q" placeholder="${u('search')}" aria-label="${u('search')}"></div>
+      <select id="selL" aria-label="${P.ui('lesson')}"></select></div>
+    <div class="chips" id="chips"><button type="button" class="chip" data-ch="0">${u('all')}</button>${P.chapters.map(c => `<button type="button" class="chip c${c.n}" data-ch="${c.n}"><span class="dot"></span>${P.ui('chapter')} ${P.ROMAN[c.n]} · ${SHORT[c.n][en ? 1 : 0]}</button>`).join('')}
+      <button type="button" class="chip" data-unk="1" aria-pressed="false">${u('unk')}</button></div>
+    <p class="small muted" id="count" style="margin:10px 2px 0"></p>
+    <div id="view"></div>`;
+  const selL = root.querySelector('#selL'), q = root.querySelector('#q'), view = root.querySelector('#view');
+  function fillLessons() {
+    const ls = st.ch ? P.chapters.find(c => c.n === st.ch).lessons : P.allLessons;
+    selL.innerHTML = `<option value="0">${P.ui('lesson')}: ${u('all')}</option>` + ls.map(l => `<option value="${l.n}">${P.ui('lesson')} ${l.n}. ${E(P.T(l))}</option>`).join('');
+    selL.value = st.l;
+  }
+  q.value = st.q; fillLessons();
+  selL.onchange = () => { st.l = +selL.value; render(); };
+  q.oninput = () => { st.q = q.value; render(); };
+  root.querySelector('#modes').onclick = e => { const b = e.target.closest('[data-mode]'); if (b) { st.mode = b.dataset.mode; render(); } };
+  root.querySelector('#chips').onclick = e => {
+    const c = e.target.closest('[data-ch]'), k = e.target.closest('[data-unk]');
+    if (c) { st.ch = +c.dataset.ch; st.l = 0; fillLessons(); render(); }
+    else if (k) { st.unk = !st.unk; render(); }
+  };
+
+  function def(t) { return P.lang === 'en' ? P.fmt(t.defEn) : P.lang === 'bi' ? `${P.fmt(t.defVi)}<div class="en" lang="en">${P.fmt(t.defEn)}</div>` : P.fmt(t.defVi); }
+  function cardHTML(t) {
+    return `<div class="tcard c${t.ch}${known[t.id] ? ' known' : ''}" id="t-${t.id}">
+      <div class="top"><a class="pill" href="bai.html?n=${t.l}" style="text-decoration:none">${P.ui('chapter')} ${P.ROMAN[t.ch]} · ${P.ui('lesson')} ${t.l}</a><span class="spacer"></span>
+        <label class="kn-t"><input type="checkbox" data-known="${t.id}" ${known[t.id] ? 'checked' : ''}> ${u('known')}</label></div>
+      <div class="hw"${en ? ' lang="en"' : ''}>${E(en ? t.en : t.vi)}</div>
+      <div class="sw${en ? '' : ' en'}"${en ? '' : ' lang="en"'}>${E(en ? t.vi : t.en)}</div>
+      <div class="say-row">${P.sayBtn(t.en)}<span class="ipa">${E(t.ipa || '')}</span>${t.pos ? `<span class="small muted">${E(t.pos)}</span>` : ''}</div>
+      <div>${P.dictHTML(t.en)}</div>
+      ${t.sym ? `<div class="sym">${P.fm(t.sym)}${t.unit ? ` · ${P.fm(t.unit)}` : ''}</div>` : ''}
+      <div class="def">${def(t)}</div>
+      ${t.exEn ? `<div class="exm en" lang="en">“${P.fmt(t.exEn)}”${P.lang !== 'en' && t.exVi ? `<span class="muted" lang="vi"> – ${P.fmt(t.exVi)}</span>` : ''}</div>` : ''}</div>`;
+  }
+  function renderList() {
+    const ts = filtered();
+    view.innerHTML = ts.length ? `<div class="term-list">${ts.map(cardHTML).join('')}</div>` : `<p class="muted" style="margin-top:14px">${u('none')}</p>`;
+    view.onchange = e => {
+      const c = e.target.closest('[data-known]'); if (!c) return;
+      if (c.checked) known[c.dataset.known] = true; else delete known[c.dataset.known];
+      P.set('known', known); c.closest('.tcard').classList.toggle('known', c.checked); count(); P.refreshKnown();
+    };
+    if (focusId && !renderList.done) { renderList.done = 1; const el = document.getElementById('t-' + focusId); if (el) { el.scrollIntoView({ block: 'center' }); el.classList.add('focus'); } }
+  }
+  function renderFlash() {
+    const key = [st.ch, st.l, st.q, st.unk].join('|');
+    if (fl.key !== key) { fl.list = filtered(); if (fl.key || fl.i >= fl.list.length) fl.i = 0; fl.key = key; }
+    if (!fl.list.length) { view.innerHTML = `<p class="muted" style="margin-top:14px">${u('none')}</p>`; return; }
+    const t = fl.list[fl.i];
+    const enFace = `<div class="w" lang="en">${E(t.en)}</div><div class="ipa">${E(t.ipa || '')}</div>`;
+    const viFace = `<div class="w">${E(t.vi)}</div>${t.sym ? `<div>${P.fm(t.sym)}${t.unit ? ` (${P.fm(t.unit)})` : ''}</div>` : ''}`;
+    view.innerHTML = `<div class="row" style="justify-content:center;margin:16px 0 12px"><span class="small muted">${u('dir')}:</span>
+        <button type="button" class="chip ${fl.front === 'en' ? 'on' : ''}" data-front="en">${u('fEn')}</button><button type="button" class="chip ${fl.front === 'vi' ? 'on' : ''}" data-front="vi">${u('fVi')}</button></div>
+      <div class="flash c${t.ch}" id="fc" role="button" tabindex="0" aria-label="${u('flip')}"><div class="inner"><div class="face front">${fl.front === 'en' ? enFace : viFace}</div>
+      <div class="face back">${fl.front === 'en' ? viFace : enFace}<div class="small">${def(t)}</div><div>${P.dictHTML(t.en)}</div></div></div></div>
+      <p class="small muted" style="text-align:center;margin-top:12px">${u('flip')} · ${fl.i + 1}/${fl.list.length}</p>
+      <div class="row c${t.ch}" style="justify-content:center"><button type="button" class="btn ghost sm" id="fp">${P.icon('back')} ${u('prev')}</button>${P.sayBtn(t.en)}<button type="button" class="btn ghost sm" id="fs">${u('shuffle')}</button><button type="button" class="btn sm" id="fn">${u('next')} ${P.icon('arrow')}</button></div>`;
+    const fc = view.querySelector('#fc');
+    fc.onclick = e => { if (e.target.closest('a')) return; fc.classList.toggle('flip'); };
+    fc.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fc.classList.toggle('flip'); } };
+    view.querySelector('#fn').onclick = () => { fl.i = (fl.i + 1) % fl.list.length; renderFlash(); };
+    view.querySelector('#fp').onclick = () => { fl.i = (fl.i - 1 + fl.list.length) % fl.list.length; renderFlash(); };
+    view.querySelector('#fs').onclick = () => { fl.list = P.shuffle(fl.list); fl.i = 0; renderFlash(); };
+    view.querySelectorAll('[data-front]').forEach(b => b.onclick = () => { fl.front = b.dataset.front; renderFlash(); });
+  }
+  function renderTest() {
+    const pool = filtered();
+    if (pool.length < 4) { view.innerHTML = `<p class="muted" style="margin-top:14px">${u('need')}</p>`; return; }
+    const qs = P.shuffle(pool).slice(0, 10).map((t, i) => {
+      const dirEnVi = i % 2 === 0;
+      const opts = P.shuffle([t, ...P.shuffle(pool.filter(x => x.id !== t.id && x.vi !== t.vi && x.en !== t.en)).slice(0, 3)]);
+      return { t, dirEnVi, opts, a: opts.indexOf(t) };
+    });
+    let done = 0, right = 0;
+    view.innerHTML = `<div style="margin-top:14px">` + qs.map((x, i) => `<div class="q-item c${x.t.ch}" data-i="${i}"><div class="qt"><span class="num">${i + 1}</span>${x.dirEnVi ? `${u('tq')}: <b class="en" lang="en" style="font-size:1.08em">${E(x.t.en)}</b> ${P.sayBtn(x.t.en)}` : `${u('tq2')}: <b>${E(x.t.vi)}</b>`}</div>
+      <div class="opts">${x.opts.map((o, k) => `<button type="button" class="opt" data-k="${k}"><span class="k">${P.KEYS[k]}</span><span${x.dirEnVi ? '' : ' class="en" lang="en"'}>${E(x.dirEnVi ? o.vi : o.en)}</span></button>`).join('')}</div></div>`).join('') +
+      `<div class="card" id="tres" hidden style="border-top:5px solid var(--o6)"></div></div>`;
+    view.onclick = e => {
+      const b = e.target.closest('.opt'); if (!b) return;
+      const it = b.closest('.q-item'); if (it.dataset.done) return; it.dataset.done = 1;
+      const x = qs[+it.dataset.i]; done++; testing = true;
+      it.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (+o.dataset.k === x.a) o.classList.add('right'); });
+      if (+b.dataset.k === x.a) right++; else b.classList.add('wrong');
+      if (done === qs.length) {
+        testing = false;
+        const r = view.querySelector('#tres'); r.hidden = false;
+        r.innerHTML = `<div class="row"><div><div class="small muted">${u('res')}</div><div class="score">${right}/${qs.length}</div></div><span class="spacer"></span><button type="button" class="btn cta" id="again">${P.icon('redo')} ${u('again')}</button></div>${qs.length === 10 && right >= 8 && P.lang !== 'en' ? `<p class="small" style="margin:10px 0 0;color:var(--ok);font-weight:600">${u('up')}</p>` : ''}`;
+        r.querySelector('#again').onclick = () => { renderTest(); window.scrollTo(0, 0); };
+        r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const hist = P.get('termtests', []); hist.push({ at: Date.now(), ch: st.ch, l: st.l, right, n: qs.length }); P.set('termtests', hist.slice(-50));
+      }
+    };
+  }
+  function count() { const s = scope(); root.querySelector('#count').textContent = `${u('showing')} ${filtered().length} / ${s.length} ${u('nTerms')} · ${u('nKnown')}: ${s.filter(t => known[t.id]).length}`; }
+  function render() {
+    root.querySelectorAll('[data-mode]').forEach(b => { const on = b.dataset.mode === st.mode; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    root.querySelectorAll('[data-ch]').forEach(b => b.classList.toggle('on', +b.dataset.ch === st.ch));
+    const ub = root.querySelector('[data-unk]'); ub.classList.toggle('on', st.unk); ub.setAttribute('aria-pressed', st.unk);
+    view.onclick = null; view.onchange = null; testing = false;
+    count();
+    if (st.mode === 'flash') renderFlash(); else if (st.mode === 'test') renderTest(); else renderList();
+  }
+  render();
+})();
+</script>
+</body></html>
